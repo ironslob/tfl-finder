@@ -82,7 +82,7 @@ function StopPointArrivals({ stopPointId }) {
 }
 */
 
-function StopPoint({ stopPoint }) {
+function StopPoint({ stopPoint, onDelete }) {
     const [stopDetails, setStopDetails] = useState(null);
     const [stationCodes, setStationCodes] = useState(null);
     const [arrivals, setArrivals] = useState([]);
@@ -130,6 +130,11 @@ function StopPoint({ stopPoint }) {
 
         Promise.all(fetchPromises).then(results => {
             let newArrivals = [].concat.apply([], results);
+            const idMap = newArrivals.reduce(function(accum, currentVal) {
+                accum[currentVal.id] = currentVal;
+                return accum;
+            }, {});
+            newArrivals = Object.values(idMap);
 
             newArrivals.sort(function(a, b) {
                 return a.timeToStation - b.timeToStation;
@@ -180,7 +185,6 @@ function StopPoint({ stopPoint }) {
             .then(data => setStopDetails(data))
     }, [stopPoint]);
 
-    // TODO add a "delete" button
     return (
         <Grid item xs={6}>
             <Card>
@@ -194,6 +198,7 @@ function StopPoint({ stopPoint }) {
                             arrivals.map(function(arrival) {
                                 return (
                                     <StopPointArrivalDetails
+                                        key={arrival.id}
                                         arrival={arrival}
                                         currentDate={tickDate}
                                     />
@@ -209,6 +214,7 @@ function StopPoint({ stopPoint }) {
                     </Typography>
                     )}
                     <Button onClick={() => refreshArrivals()}>Refresh</Button>
+                    <Button onClick={() => onDelete()} variant="error">Delete</Button>
                 </CardActions>
             </Card>
         </Grid>
@@ -218,7 +224,7 @@ function StopPoint({ stopPoint }) {
 function App() {
     const [search, setSearch] = useState("");
     const [options, setOptions] = useState([]);
-    const [displayStops, setDisplayStops] = useState([]);
+    const [displayStops, setDisplayStops] = useState(JSON.parse(localStorage.getItem("displayStops")) || []);
     const [displayIds, setDisplayIds] = useState([]);
 
     const updateOptions = useMemo(
@@ -233,6 +239,7 @@ function App() {
     );
 
     useEffect(() => {
+        localStorage.setItem("displayStops", JSON.stringify(displayStops));
         setDisplayIds(displayStops.map(function (stop) { return stop.id }));
     }, [displayStops]);
 
@@ -271,6 +278,11 @@ function App() {
             setOptions([]);
         }
     }, [search, updateOptions]);
+
+    const deleteStop = (stopId) => {
+        const newDisplayStops = displayStops.filter((stop) => stop.id !== stopId);
+        setDisplayStops(newDisplayStops);
+    };
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -322,6 +334,7 @@ function App() {
                         <StopPoint
                             key={displayStop.id}
                             stopPoint={displayStop}
+                            onDelete={() => deleteStop(displayStop.id)}
                         />
                     );
                 })}
