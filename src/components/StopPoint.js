@@ -48,7 +48,6 @@ export default function StopPoint({ stopPoint, onDelete }) {
     useEffect(() => {
         const setTimer = () => {
             const timer = setTimeout(() => {
-                console.log('tick');
                 setTickDate(new Date());
                 setTimer();
             }, 30000);
