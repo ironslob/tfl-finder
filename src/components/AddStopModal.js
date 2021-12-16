@@ -21,6 +21,8 @@ import { transportModeLabels, allTransportModes } from '../constants';
 export default function AddStopModal({ onChoose, open, onClose, currentIds, clearOnChoose = true }) {
     const [search, setSearch] = useState("");
     const [options, setOptions] = useState(null);
+    const [modes, setModes] = useState(allTransportModes);
+    const [stations, setStations] = useState([]);
 
     const updateOptions = useMemo(
         () =>
@@ -69,8 +71,6 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
         }
     }, [search, updateOptions, currentIds]);
 
-    const [modes, setModes] = useState(allTransportModes);
-
     const toggleMode = (mode) => {
         const idx = modes.indexOf(mode);
 
@@ -80,8 +80,6 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
             setModes([...modes, mode]);
         }
     };
-
-    const [stations, setStations] = useState([]);
 
     const toggleStation = (station) => {
         let newStations = stations.filter(function (existing) {
@@ -101,8 +99,24 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
         setStationIds(stations.map(function (stop) { return stop.id }));
     }, [stations]);
 
+    const cleanup = () => {
+        setSearch("");
+        setOptions(null);
+        setStations([]);
+    };
+
+    const handleConfirm = () => {
+        onChoose(stations);
+        cleanup();
+    };
+
+    const handleClose = () => {
+        onClose();
+        cleanup();
+    };
+
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Add new station stop</DialogTitle>
             <DialogContent>
                 <Stack spacing={3}>
@@ -170,8 +184,8 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
                 )}
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
-                <Button onClick={() => onChoose(stations)}>Confirm</Button>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button disabled={stations.length === 0} onClick={handleConfirm}>Confirm</Button>
             </DialogActions>
         </Dialog>
     );
