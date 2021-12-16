@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import StopPoint from './components/StopPoint';
 import AddStopModal from './components/AddStopModal';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 
 function App() {
     const [displayStops, setDisplayStops] = useState(JSON.parse(localStorage.getItem("displayStops")) || []);
@@ -43,6 +45,14 @@ function App() {
                         }}
                         currentIds={displayIds}
                     />
+                    {displayStops.length === 0 && (
+                        <Box style={{'display': 'flex'}}>
+                            <KeyboardDoubleArrowLeftIcon/>
+                            <Typography>
+                                Click here to add station stops!
+                            </Typography>
+                        </Box>
+                    )}
                 </Toolbar>
             </AppBar>
             <Grid container spacing={2}>
