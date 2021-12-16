@@ -92,7 +92,7 @@ export default function StopPoint({ stopPoint, onDelete }) {
     }, [stopPoint]);
 
     return (
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6} md={6} lg={4}>
             <Card>
                 <CardContent>
                     <Typography variant="h4">
