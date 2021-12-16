@@ -18,7 +18,12 @@ export default function StopPointArrivalDetails({ arrival, currentDate }) {
 
     return (
         <Typography>
-            {tts} <img alt={arrival.modeName} style={{'maxHeight': '1em'}} src={process.env.PUBLIC_URL + "/" + arrival.modeName + ".svg"} />{arrival.modeName === 'bus' && arrival.lineName} to {normalizeStation(arrival.destinationName)} @ {arrival.expectedArrival.substring(11, 16)}
+            <img
+                alt={arrival.modeName}
+                style={{'maxHeight': '1em', 'display': 'inline'}}
+                src={process.env.PUBLIC_URL + "/" + arrival.modeName + ".svg"}
+            />
+            &nbsp;{tts} - {arrival.modeName === 'bus' && arrival.lineName} to {normalizeStation(arrival.destinationName)} @ {arrival.expectedArrival.substring(11, 16)}
         </Typography>
     );
 }
