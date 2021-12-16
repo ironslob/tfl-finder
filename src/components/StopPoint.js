@@ -98,7 +98,7 @@ export default function StopPoint({ stopPoint, onDelete }) {
                     <Typography variant="h4">
                         {stopPoint.name}
                     </Typography>
-                    <Box style={{'height': '300px', 'overflow': 'auto'}}>
+                    <Box style={{'maxHeight': '10em', 'overflow': 'auto'}}>
                         {arrivals === null ?
                             (<CircularProgress />) :
                             arrivals.map(function(arrival) {
