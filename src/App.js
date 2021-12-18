@@ -34,6 +34,26 @@ const identifyLineGroup = (lineGroup) => {
         return transportBus;
     }
 
+    const undergroundLines = [
+        'bakerloo',
+        'central',
+        'circle',
+        'district',
+        'hammersmith-city',
+        'jubilee',
+        'metropolitan',
+        'northern',
+        'piccadilly',
+        'victoria',
+        'waterloo-city',
+    ];
+
+    const containsTube = lineGroup.lineIdentifier.some(value => undergroundLines.includes(value));
+
+    if (containsTube) {
+        return transportTube;
+    }
+
     const ident = lineGroup.lineIdentifier[0];
 
     if (ident === 'london-overground') {

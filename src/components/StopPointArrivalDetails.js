@@ -9,9 +9,16 @@ export default function StopPointArrivalDetails({ arrival, currentDate }) {
     const tts = ttsMinutes < 1 ? 'Now' : ttsMinutes + 'm';
 
     const normalizeStation = (station) => {
-        if (station.endsWith(' Rail Station')) {
-            station = station.substring(0, station.length - 13)
-        }
+        const trims = [
+            ' Rail Station',
+            ' Underground Station',
+        ];
+
+        trims.forEach((trim) => {
+            if (station.endsWith(trim)) {
+                station = station.substring(0, station.length - trim.length);
+            }
+        });
 
         return station;
     };

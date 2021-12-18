@@ -88,15 +88,17 @@ export default function StopPoint({ stopPoint, onDelete, stopPointStations }) {
                     <Box style={{'maxHeight': '10em', 'overflow': 'auto'}}>
                         {arrivals === null ?
                             (<CircularProgress />) :
-                            arrivals.map(function(arrival) {
-                                return (
-                                    <StopPointArrivalDetails
-                                        key={arrival.id}
-                                        arrival={arrival}
-                                        currentDate={tickDate}
-                                    />
-                                );
-                            })
+                            arrivals
+                                .filter((arrival) => !!arrival.destinationName)
+                                . map(function(arrival) {
+                                    return (
+                                        <StopPointArrivalDetails
+                                            key={arrival.id}
+                                            arrival={arrival}
+                                            currentDate={tickDate}
+                                        />
+                                    );
+                                })
                         }
                     </Box>
                 </CardContent>
