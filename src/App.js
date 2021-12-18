@@ -11,9 +11,9 @@ import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrow
 import { 
     transportTube,
     transportBus,
-    //transportNationalRail,
+    transportNationalRail,
     transportOverground,
-    //transportDLR,
+    transportDLR,
     //transportTFLRail,
 } from './constants';
 
@@ -58,11 +58,13 @@ const identifyLineGroup = (lineGroup) => {
 
     if (ident === 'london-overground') {
         return transportOverground;
+    } else if (ident === 'dlr') {
+        return transportDLR;
     } else {
         console.log('unknown ident ' + ident);
     }
     
-    return transportTube;   // guess work
+    return transportNationalRail;   // guess work
 };
 
 function App() {
@@ -148,7 +150,9 @@ function App() {
                 </Toolbar>
             </AppBar>
             <Grid container spacing={2}>
-                {displayStops.map(function(displayStop) {
+                {displayStops
+                        .filter((displayStop) => stopStations && !!stopStations[displayStop.id + "|" + displayStop.mode])
+                        .map(function(displayStop) {
                     return (
                         <StopPoint
                             key={displayStop.id + "|" + displayStop.mode}
