@@ -56,6 +56,10 @@ function App() {
             fetch('https://api.tfl.gov.uk/StopPoint/' + stopPointIds)
                 .then(response => response.json())
                 .then(data => {
+                    if (!(data instanceof Array)) {
+                        data = [data];
+                    }
+
                     // stopStations should be { displayStopId: stationIds }
                     let stopPointStations = {};
 

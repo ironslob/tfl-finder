@@ -5,14 +5,13 @@ const transportOverground = 'overground';
 const transportDLR = 'dlr';
 const transportTFLRail = 'tflrail';
 
-const transportModeLabels = {
-    transportTube: 'Tube',
-    transportBus: 'Bus',
-    transportNationalRail: 'National Rail',
-    transportOverground: 'Overground',
-    transportDLR: 'DLR',
-    transportTFLRail: 'TFL Rail',
-};
+const transportModeLabels = {};
+transportModeLabels[transportTube] = 'Tube';
+transportModeLabels[transportBus] = 'Bus';
+transportModeLabels[transportNationalRail] = 'National Rail';
+transportModeLabels[transportOverground] = 'Overground';
+transportModeLabels[transportDLR] = 'DLR';
+transportModeLabels[transportTFLRail] = 'TFL Rail';
 
 const allTransportModes = Object.keys(transportModeLabels);
 

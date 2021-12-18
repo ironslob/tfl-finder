@@ -78,6 +78,11 @@ export default function StopPoint({ stopPoint, onDelete, stopPointStations }) {
             <Card>
                 <CardContent>
                     <Typography variant="h4">
+                        <img
+                            alt={stopPoint.mode}
+                            style={{'maxHeight': '1em', 'display': 'inline'}}
+                            src={process.env.PUBLIC_URL + "/" + stopPoint.mode + ".svg"}
+                        />
                         {stopPoint.name}
                     </Typography>
                     <Box style={{'maxHeight': '10em', 'overflow': 'auto'}}>

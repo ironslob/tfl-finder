@@ -57,7 +57,8 @@ export default function AddStopModal({ onChoose, open, onClose, currentStops, cl
                 matches = [].concat.apply([], matches)
                     .filter(function (match) {
                         return !currentStops.some((stop) => (stop.id === match.id && stop.mode === match.mode));
-                    });
+                    })
+                ;
 
                 // sort by name and mode
                 matches.sort(function (a, b) {
