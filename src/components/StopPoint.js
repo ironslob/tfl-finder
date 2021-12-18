@@ -9,15 +9,13 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import StopPointArrivalDetails from './StopPointArrivalDetails';
 
-export default function StopPoint({ stopPoint, onDelete }) {
-    const [stopDetails, setStopDetails] = useState(null);
-    const [stationCodes, setStationCodes] = useState(null);
+export default function StopPoint({ stopPoint, onDelete, stopPointStations }) {
     const [arrivals, setArrivals] = useState([]);
     const [lastUpdate, setLastUpdate] = useState(null);
     const [tickDate, setTickDate] = useState(new Date());
 
     const loadArrivals = useCallback(() => {
-        const fetchPromises = stationCodes.map(function(stationCode) {
+        const fetchPromises = stopPointStations.map(function(stationCode) {
             return fetch('https://api.tfl.gov.uk/StopPoint/' + stationCode + '/Arrivals')
                 .then(response => response.json())
         });
@@ -37,13 +35,13 @@ export default function StopPoint({ stopPoint, onDelete }) {
             setArrivals(newArrivals);
             setLastUpdate(new Date());
         });
-    }, [stationCodes]);
+    }, [stopPointStations]);
 
     const refreshArrivals = useCallback(() => {
-        if (stationCodes !== null) {
+        if (stopPointStations !== null) {
             loadArrivals();
         }
-    }, [loadArrivals, stationCodes]);
+    }, [loadArrivals, stopPointStations]);
 
     useEffect(() => {
         const setTimer = () => {
@@ -74,22 +72,6 @@ export default function StopPoint({ stopPoint, onDelete }) {
     useEffect(() => {
         refreshArrivals();
     }, [refreshArrivals]);
-
-    useEffect(() => {
-        if (stopDetails) {
-            const newStationCodes = stopDetails.lineGroup.map(function (lineGroup) {
-                return lineGroup.naptanIdReference || lineGroup.stationAtcoCode;
-            });
-
-            setStationCodes(newStationCodes);
-        }
-    }, [stopDetails]);
-
-    useEffect(() => {
-        fetch('https://api.tfl.gov.uk/StopPoint/' + stopPoint.id)
-            .then(response => response.json())
-            .then(data => setStopDetails(data))
-    }, [stopPoint]);
 
     return (
         <Grid item xs={12} sm={6} md={6} lg={4}>

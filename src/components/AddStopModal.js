@@ -18,7 +18,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { transportModeLabels, allTransportModes } from '../constants';
 
-export default function AddStopModal({ onChoose, open, onClose, currentIds, clearOnChoose = true }) {
+export default function AddStopModal({ onChoose, open, onClose, currentStops, clearOnChoose = true }) {
     const [search, setSearch] = useState("");
     const [options, setOptions] = useState(null);
     const [modes, setModes] = useState(allTransportModes);
@@ -38,20 +38,28 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
     useEffect(() => {
         if (search.length >= 2) {
             updateOptions(search, (results) => {
+                // need to unroll matches so we can filter based on mode
                 let matches = results.matches
-                    .filter(function (match) {
-                        return (currentIds.indexOf(match.id) === -1);
-                    })
                     .map(function (match) {
-                        return {
-                            modes: match.modes,
-                            id: match.id,
-                            name: match.name,
-                            lat: match.lat,
-                            lon: match.lon,
-                        };
+                        return match.modes.map(function (m) {
+                            return {
+                                mode: m,
+                                id: match.id,
+                                name: match.name,
+                                lat: match.lat,
+                                lon: match.lon,
+                            };
+                        });
+                    })
+                    ;
+
+                // flatten and filter
+                matches = [].concat.apply([], matches)
+                    .filter(function (match) {
+                        return !currentStops.some((stop) => (stop.id === match.id && stop.mode === match.mode));
                     });
 
+                // sort by name and mode
                 matches.sort(function (a, b) {
                     if (a.name < b.name) {
                         return -1;
@@ -59,6 +67,14 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
 
                     if (a.name > b.name) {
                         return 1;
+                    }
+
+                    if (a.mode < b.mode) {
+                        return -1;
+                    }
+
+                    if (a.mode > b.mode) {
+                        return -1;
                     }
 
                     return 0;
@@ -69,7 +85,7 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
         } else {
             setOptions([]);
         }
-    }, [search, updateOptions, currentIds]);
+    }, [search, updateOptions]);
 
     const toggleMode = (mode) => {
         const idx = modes.indexOf(mode);
@@ -83,7 +99,7 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
 
     const toggleStation = (station) => {
         let newStations = stations.filter(function (existing) {
-            return existing.id !== station.id;
+            return !(existing.id === station.id && station.mode === existing.mode);
         });
 
         if (newStations.length === stations.length) {
@@ -93,10 +109,12 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
         setStations(newStations);
     };
 
-    const [stationIds, setStationIds] = useState([]);
+    const [selectedStations, setSelectedStations] = useState([]);
 
     useEffect(() => {
-        setStationIds(stations.map(function (stop) { return stop.id }));
+        setSelectedStations(stations.map(function (stop) {
+            return stop.id + "|" + stop.mode;
+        }));
     }, [stations]);
 
     const cleanup = () => {
@@ -150,28 +168,24 @@ export default function AddStopModal({ onChoose, open, onClose, currentIds, clea
                 {options !== null && (
                 <List>
                     {options.map(function (option) {
-                        const modeOverlap = modes.some(value => option.modes.includes(value));
-                        const chosen = currentIds.includes(option.id);
+                        const modeOverlap = modes.includes(option.mode);
+                        // TODO filter based on whats currently shown
+                        const chosen = false;
 
                         return (
                             <>
                                 {(modeOverlap && !chosen) && (
-                                <ListItem disablePadding key={option.id}>
+                                <ListItem disablePadding key={option.id + "|" + option.mode}>
                                     <ListItemButton
                                         onClick={() => toggleStation(option)}
-                                        selected={stationIds.includes(option.id)}
+                                        selected={selectedStations.includes(option.id + "|" + option.mode)}
                                     >
                                         <ListItemIcon>
-                                            {option.modes.map(function (mode) {
-                                                return (
-                                                    <img
-                                                        key={option.id + '-' + mode}
-                                                        style={{'maxHeight': '1em'}}
-                                                        src={process.env.PUBLIC_URL + "/" + mode + ".svg"}
-                                                        alt={mode}
-                                                    />
-                                                );
-                                            })}
+                                            <img
+                                                style={{'maxHeight': '1em'}}
+                                                src={process.env.PUBLIC_URL + "/" + option.mode + ".svg"}
+                                                alt={transportModeLabels[option.mode]}
+                                            />
                                         </ListItemIcon>
                                         <ListItemText primary={option.name} />
                                     </ListItemButton>
