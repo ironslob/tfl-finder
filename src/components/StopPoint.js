@@ -8,6 +8,9 @@ import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import StopPointArrivalDetails from './StopPointArrivalDetails';
+import {
+    identifyLineIdentifier,
+} from '../utils';
 
 export default function StopPoint({ stopPoint, onDelete, stopPointStations }) {
     const [arrivals, setArrivals] = useState([]);
@@ -27,6 +30,7 @@ export default function StopPoint({ stopPoint, onDelete, stopPointStations }) {
                 return accum;
             }, {});
             newArrivals = Object.values(idMap);
+            newArrivals = newArrivals.filter((arrival) => identifyLineIdentifier(arrival.lineId) === stopPoint.mode);
 
             newArrivals.sort(function(a, b) {
                 return a.timeToStation - b.timeToStation;

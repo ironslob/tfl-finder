@@ -16,61 +16,20 @@ import {
     transportDLR,
     //transportTFLRail,
 } from './constants';
+import {
+    uniqueArray,
+    identifyLineGroup,
+} from './utils';
 
 const localStorageKey = "displayStops_1";
 const maxStops = 20;
-const uniqueArray = (array) => {
-    const mapped = array.reduce(function(accum, currentVal) {
-        accum[currentVal] = true;
-        return accum;
-    }, {});
-    return Object.keys(mapped);
-};
 
-const identifyLineGroup = (lineGroup) => {
-    const constainsNumber = lineGroup.lineIdentifier.some((ident) => /\d/.test(ident));
-
-    if (constainsNumber) {
-        return transportBus;
-    }
-
-    const undergroundLines = [
-        'bakerloo',
-        'central',
-        'circle',
-        'district',
-        'hammersmith-city',
-        'jubilee',
-        'metropolitan',
-        'northern',
-        'piccadilly',
-        'victoria',
-        'waterloo-city',
-    ];
-
-    const containsTube = lineGroup.lineIdentifier.some(value => undergroundLines.includes(value));
-
-    if (containsTube) {
-        return transportTube;
-    }
-
-    const ident = lineGroup.lineIdentifier[0];
-
-    if (ident === 'london-overground') {
-        return transportOverground;
-    } else if (ident === 'dlr') {
-        return transportDLR;
-    } else {
-        console.log('unknown ident ' + ident);
-    }
-    
-    return transportNationalRail;   // guess work
-};
 
 function App() {
     const [displayStops, setDisplayStops] = useState(JSON.parse(localStorage.getItem(localStorageKey)) || []);
     const [stopStations, setStopStations] = useState(null);
 
+    // TODO move arrivals into this code, so we don't duplicate too much
     const loadStops = useCallback(() => {
         if (displayStops.length > 0) {
             const stopPointIds = uniqueArray(displayStops.map((stop) => stop.id)).join(",");
@@ -95,10 +54,10 @@ function App() {
                         lineGroups = [].concat.apply([], lineGroups);
 
                         const stationCodes = lineGroups
-                            .filter((lineGroup) => identifyLineGroup(lineGroup) === stop.mode)
+                            .filter((lineGroup) => identifyLineGroup(lineGroup).includes(stop.mode))
                             .map((lineGroup) => lineGroup.naptanIdReference || lineGroup.stationAtcoCode);
 
-                        stopPointStations[stop.id + "|" + stop.mode] = stationCodes;
+                        stopPointStations[stop.id + "|" + stop.mode] = uniqueArray(stationCodes);
                     });
 
                     setStopStations(stopPointStations);
