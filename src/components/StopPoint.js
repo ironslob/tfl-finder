@@ -39,7 +39,7 @@ export default function StopPoint({ stopPoint, onDelete, stopPointStations }) {
             setArrivals(newArrivals);
             setLastUpdate(new Date());
         });
-    }, [stopPointStations]);
+    }, [stopPoint, stopPointStations]);
 
     const refreshArrivals = useCallback(() => {
         if (stopPointStations !== null) {

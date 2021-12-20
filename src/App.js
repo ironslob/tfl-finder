@@ -8,14 +8,6 @@ import Toolbar from '@mui/material/Toolbar';
 import StopPoint from './components/StopPoint';
 import AddStopModal from './components/AddStopModal';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import { 
-    transportTube,
-    transportBus,
-    transportNationalRail,
-    transportOverground,
-    transportDLR,
-    //transportTFLRail,
-} from './constants';
 import {
     uniqueArray,
     identifyLineGroup,

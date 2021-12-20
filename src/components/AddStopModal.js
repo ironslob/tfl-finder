@@ -86,7 +86,7 @@ export default function AddStopModal({ onChoose, open, onClose, currentStops, cl
         } else {
             setOptions([]);
         }
-    }, [search, updateOptions]);
+    }, [currentStops, search, updateOptions]);
 
     const toggleMode = (mode) => {
         const idx = modes.indexOf(mode);
